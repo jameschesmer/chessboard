@@ -1,0 +1,17 @@
+.tiles-grid-container {
+  width: 800px;
+  height: 800px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  margin: 10px auto;
+  border: 5px solid red
+}
+
+.white {
+    background: white;
+}
+
+.black {
+  background: black;
+}
