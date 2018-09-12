@@ -40,12 +40,12 @@ class App extends Component {
 
       const rules = {
         pawn: {
-          W1: x1 - x === 1 && y1 - y === 0 || x1 - x === 1 && Math.abs(y1 - y) === 1,
-          B1: x - x1 === 1 && y - y1 === 0 || x - x1 === 1 && Math.abs(y - y1) === 1,
+          W1: x1 - x === 1 && y1 - y === 0 && this.checkPieceNotInWay(x, y, x1, y1) || x1 - x === 1 && Math.abs(y1 - y) === 1,
+          B1: x - x1 === 1 && y - y1 === 0 && this.checkPieceNotInWay(x, y, x1, y1) || x - x1 === 1 && Math.abs(y - y1) === 1,
         },
         rook: {
           W1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1),
-          B1: y1 - y === 0 || x1 - x === 0
+          B1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1)
         },
         bishop: {
           W1: Math.abs(y1 - y) === Math.abs(x1 - x),
@@ -56,8 +56,8 @@ class App extends Component {
           B1: Math.abs(y1 - y) === 2 && Math.abs(x1 - x) === 1 || Math.abs(y1 - y) === 1 && Math.abs(x1 - x) === 2
         },
         queen: {
-          W1: y1 - y === 0 || x1 - x === 0 || Math.abs(y1 - y) === Math.abs(x1 - x),
-          B1: y1 - y === 0 || x1 - x === 0 || Math.abs(y1 - y) === Math.abs(x1 - x)
+          W1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1) || Math.abs(y1 - y) === Math.abs(x1 - x),
+          B1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1) || Math.abs(y1 - y) === Math.abs(x1 - x)
         },
         king: {
           W1: Math.abs(y1 - y) === 1 || Math.abs(x1 - x) === 1,
@@ -80,7 +80,7 @@ class App extends Component {
   checkPieceNotInWay = (x, y, x1, y1) => {
     if (x - x1 === 0) {
       let passable = true;
-      for (let i = y; i < y1; i++) {
+      for (let i = y < y1 + 1 ? y : parseInt(y1) + 1; y < y1 ? i < y1 : i < y; i++) {
         if (this.state.locations[x][i] !== '') {
           passable = false;
           break;
@@ -90,7 +90,7 @@ class App extends Component {
       return passable;
     } else if (y - y1 === 0) {
       let passable = true;
-      for (let i = x < x1 ? x : x1; x < x1 ? i < x1 : i >= x; x < x1 ? i++ : i--) {
+      for (let i = x < x1 ? x : parseInt(x1) + 1; x < x1 ? i < x1 : i < x; i++) {
         if (this.state.locations[i][y] !== '') {
           passable = false;
           break;
@@ -100,8 +100,6 @@ class App extends Component {
       return passable;
     }
   }
-
-
 }
 
 export default App;
