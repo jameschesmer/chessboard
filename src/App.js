@@ -44,7 +44,7 @@ class App extends Component {
           B1: x - x1 === 1 && y - y1 === 0 || x - x1 === 1 && Math.abs(y - y1) === 1,
         },
         rook: {
-          W1: y1 - y === 0 || x1 - x === 0,
+          W1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1),
           B1: y1 - y === 0 || x1 - x === 0
         },
         bishop: {
@@ -65,15 +65,39 @@ class App extends Component {
         }
       }
       if (rules[this.state.selectedPiece.slice(2).toLowerCase()][`${this.state.selectedPiece[0]}1`]) {
-
         let newLocation = [...this.state.locations]
         newLocation[x].splice(y, 1, this.state.selectedPiece)
         newLocation[x1].splice(y1, 1, '')
         this.setState({
           locations: newLocation,
-          selectedPiece: ''
+          selectedPiece: '',
+          currentLocation: ''
         })
       }
+    }
+  }
+
+  checkPieceNotInWay = (x, y, x1, y1) => {
+    if (x - x1 === 0) {
+      let passable = true;
+      for (let i = y; i < y1; i++) {
+        if (this.state.locations[x][i] !== '') {
+          passable = false;
+          break;
+        }
+        else passable = true;
+      }
+      return passable;
+    } else if (y - y1 === 0) {
+      let passable = true;
+      for (let i = x < x1 ? x : x1; x < x1 ? i < x1 : i >= x; x < x1 ? i++ : i--) {
+        if (this.state.locations[i][y] !== '') {
+          passable = false;
+          break;
+        }
+        else passable = true;
+      }
+      return passable;
     }
   }
 
