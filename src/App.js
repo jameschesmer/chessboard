@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Tiles from './components/Tiles';
-import Piece from './components/Piece';
+//import Piece from './components/Piece';
 
 class App extends Component {
   state = {
@@ -27,6 +27,7 @@ class App extends Component {
   }
 
   selectPiece = (event) => {
+    console.log(event.target)
     this.setState({
       selectedPiece: event.target.value,
       currentLocation: event.target.className.split(',')
@@ -40,28 +41,28 @@ class App extends Component {
 
       const rules = {
         pawn: {
-          W1: x1 - x === 1 && y1 - y === 0 && this.checkPieceNotInWay(x, y, x1, y1) || x1 - x === 1 && Math.abs(y1 - y) === 1,
-          B1: x - x1 === 1 && y - y1 === 0 && this.checkPieceNotInWay(x, y, x1, y1) || x - x1 === 1 && Math.abs(y - y1) === 1,
+          W1: (x1 - x === 1 && y1 - y === 0 && this.checkPieceNotInWay(x, y, x1, y1)) || (x1 - x === 1 && Math.abs(y1 - y) === 1),
+          B1: (x - x1 === 1 && y - y1 === 0 && this.checkPieceNotInWay(x, y, x1, y1)) || (x - x1 === 1 && Math.abs(y - y1) === 1),
         },
         rook: {
           W1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1),
           B1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1)
         },
         bishop: {
-          W1: Math.abs(y1 - y) === Math.abs(x1 - x),
-          B1: Math.abs(y1 - y) === Math.abs(x1 - x)
+          W1: Math.abs(y1 - y) === Math.abs(x1 - x) && this.checkPieceNotInWayDiagonal(x, y, x1, y1),
+          B1: Math.abs(y1 - y) === Math.abs(x1 - x) && this.checkPieceNotInWayDiagonal(x, y, x1, y1)
         },
         knight: {
-          W1: Math.abs(y1 - y) === 2 && Math.abs(x1 - x) === 1 || Math.abs(y1 - y) === 1 && Math.abs(x1 - x) === 2,
-          B1: Math.abs(y1 - y) === 2 && Math.abs(x1 - x) === 1 || Math.abs(y1 - y) === 1 && Math.abs(x1 - x) === 2
+          W1: (Math.abs(y1 - y) === 2 && Math.abs(x1 - x) === 1) || (Math.abs(y1 - y) === 1 && Math.abs(x1 - x) === 2),
+          B1: (Math.abs(y1 - y) === 2 && Math.abs(x1 - x) === 1) || (Math.abs(y1 - y) === 1 && Math.abs(x1 - x) === 2)
         },
         queen: {
-          W1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1) || Math.abs(y1 - y) === Math.abs(x1 - x),
-          B1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1) || Math.abs(y1 - y) === Math.abs(x1 - x)
+          W1: ((y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1)) || (Math.abs(y1 - y) === Math.abs(x1 - x) && this.checkPieceNotInWayDiagonal(x, y, x1, y1)),
+          B1: ((y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1)) || (Math.abs(y1 - y) === Math.abs(x1 - x) && this.checkPieceNotInWayDiagonal(x, y, x1, y1))
         },
         king: {
-          W1: Math.abs(y1 - y) === 1 || Math.abs(x1 - x) === 1,
-          B1: Math.abs(y1 - y) === 1 || Math.abs(x1 - x) === 1
+          W1: (Math.abs(y1 - y) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W')) || (Math.abs(x1 - x) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W')),
+          B1: (Math.abs(y1 - y) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B')) || (Math.abs(x1 - x) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B'))
         }
       }
       if (rules[this.state.selectedPiece.slice(2).toLowerCase()][`${this.state.selectedPiece[0]}1`]) {
@@ -77,6 +78,7 @@ class App extends Component {
     }
   }
 
+  ////straight checks
   checkPieceNotInWay = (x, y, x1, y1) => {
     if (x - x1 === 0) {
       let passable = true;
@@ -98,6 +100,101 @@ class App extends Component {
         else passable = true;
       }
       return passable;
+    }
+  }
+
+  ////diagonal checks
+  checkPieceNotInWayDiagonal = (x, y, x1, y1) => {
+    x = parseInt(x);
+    y = parseInt(y)
+    x1 = parseInt(x1)
+    y1 = parseInt(y1)
+
+    ///left to right diagonal (decending)
+    if (y - y1 === x - x1) {
+      /// decending
+      if (y > y1) {
+        let passable = true;
+        let j = y;
+        for (let i = x; i >= x1 + 1; i--) {
+          if (this.state.locations[i][j] !== '') {
+            passable = false;
+            break;
+          }
+          else {
+            passable = true;
+            j--
+          }
+        }
+        return passable;
+      }
+      /// accending
+      else if (y1 > y) {
+        let passable = true;
+        let j = y;
+        for (let i = x; i < x1; i++) {
+          if (this.state.locations[i][j] !== '') {
+            passable = false;
+            break;
+          }
+          else {
+            passable = true;
+            j++
+          }
+        }
+        return passable;
+      }
+    }
+    ///right to left diagonal (decending)
+    else if (Math.abs(y - y1) === Math.abs(x - x1)) {
+      /// accending
+      if (y > y1) {
+        let passable = true;
+        let j = x1 - 1;
+        for (let i = y1 + 1; i <= y; i++) {
+          if (this.state.locations[j][i] !== '') {
+            passable = false;
+            break;
+          }
+          else {
+            passable = true;
+            j--
+          }
+        }
+        return passable;
+      }
+      /// decending
+      else if (y1 > y) {
+        let passable = true;
+        let j = y1 - 1;
+        for (let i = x1 + 1; i <= x; i++) {
+          if (this.state.locations[i][j] !== '') {
+            passable = false;
+            break;
+          }
+          else {
+            passable = true;
+            j--
+          }
+        }
+        return passable;
+      }
+    }
+  }
+
+  ///taking pieces
+  checkDestinationIsOppositeColour = (x, y, x1, y1, colour) => {
+    x = parseInt(x);
+    y = parseInt(y)
+    x1 = parseInt(x1)
+    y1 = parseInt(y1)
+
+    if (colour === 'W') {
+      console.log(this.state.locations[x][y][0])
+      return (this.state.locations[x][y][0] === 'B' || this.state.locations[x][y][0] === undefined)
+    }
+    if (colour === 'B') {
+      return (this.state.locations[x][y][0] === 'W' || this.state.locations[x][y][0] === undefined)
     }
   }
 }
