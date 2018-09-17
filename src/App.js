@@ -30,10 +30,14 @@ class App extends Component {
 
   selectPiece = (event) => {
     console.log(event.target)
-    this.setState({
-      selectedPiece: event.target.value,
-      currentLocation: event.target.className.split(',')
-    })
+    if (event.target.value[0] === this.state.colour[0]) {
+      this.setState({
+        selectedPiece: event.target.value,
+        currentLocation: event.target.className.split(',')
+      })
+    } else {
+      alert(`Please pick a ${this.state.colour} piece`)
+    }
   }
 
   movePiece = (event) => {
@@ -130,7 +134,7 @@ class App extends Component {
         let passable = true;
         let j = y - 1;
         for (let i = x - 1; i >= x1 + 1; i--) {
-          console.log(i, j, 'tested')
+          console.log(i, j, 'tested1')
           if (this.state.locations[i][j] !== '') {
             passable = false;
             break;
@@ -147,7 +151,7 @@ class App extends Component {
         let passable = true;
         let j = y + 1;
         for (let i = x + 1; i < x1; i++) {
-          console.log(i, j, 'tested')
+          console.log(i, j, 'tested2')
           if (this.state.locations[i][j] !== '') {
             passable = false;
             break;
@@ -165,9 +169,9 @@ class App extends Component {
       /// accending
       if (y > y1) {
         let passable = true;
-        let j = x1 - 2;
-        for (let i = y1 + 2; i <= y; i++) {
-          console.log(i, j, 'tested')
+        let j = x1 - 1;
+        for (let i = y1 + 1; i <= y - 1; i++) {
+          console.log(j, i, 'tested3')
           if (this.state.locations[j][i] !== '') {
             passable = false;
             break;
@@ -184,7 +188,7 @@ class App extends Component {
         let passable = true;
         let j = y1 - 1;
         for (let i = x1 + 1; i <= x - 1; i++) {
-          console.log(i, j, 'tested')
+          console.log(i, j, 'tested4')
           if (this.state.locations[i][j] !== '') {
             passable = false;
             break;
@@ -207,7 +211,7 @@ class App extends Component {
     y1 = parseInt(y1)
 
     if (colour === 'W') {
-      console.log(this.state.locations[x][y][0])
+      console.log(this.state.locations[x][y][0], 'object colour')
       return (this.state.locations[x][y][0] === 'B' || this.state.locations[x][y][0] === undefined)
     }
     if (colour === 'B') {
