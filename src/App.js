@@ -15,12 +15,14 @@ class App extends Component {
       ['W Pawn', 'W Pawn', 'W Pawn', 'W Pawn', 'W Pawn', 'W Pawn', 'W Pawn', 'W Pawn'],
       ['W Rook', 'W Knight', 'W Bishop', 'W Queen', 'W King', 'W Bishop', 'W Knight', 'W Rook']],
     selectedPiece: '',
-    currentLocation: ''
+    currentLocation: '',
+    colour: 'White'
   }
   render() {
     return (
       <div className="App">
         <h1>Chess Board</h1>
+        <p>{this.state.colour} to play</p>
         <Tiles locations={this.state.locations} selectPiece={this.selectPiece} movePiece={this.movePiece} />
       </div>
     );
@@ -45,20 +47,20 @@ class App extends Component {
           B1: (x - x1 === 1 && y - y1 === 0 && this.checkPieceNotInWay(x, y, x1, y1)) || (x - x1 === 1 && Math.abs(y - y1) === 1),
         },
         rook: {
-          W1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1),
-          B1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1)
+          W1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W'),
+          B1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B')
         },
         bishop: {
-          W1: Math.abs(y1 - y) === Math.abs(x1 - x) && this.checkPieceNotInWayDiagonal(x, y, x1, y1),
-          B1: Math.abs(y1 - y) === Math.abs(x1 - x) && this.checkPieceNotInWayDiagonal(x, y, x1, y1)
+          W1: Math.abs(y1 - y) === Math.abs(x1 - x) && this.checkPieceNotInWayDiagonal(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W'),
+          B1: Math.abs(y1 - y) === Math.abs(x1 - x) && this.checkPieceNotInWayDiagonal(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B')
         },
         knight: {
-          W1: (Math.abs(y1 - y) === 2 && Math.abs(x1 - x) === 1) || (Math.abs(y1 - y) === 1 && Math.abs(x1 - x) === 2),
-          B1: (Math.abs(y1 - y) === 2 && Math.abs(x1 - x) === 1) || (Math.abs(y1 - y) === 1 && Math.abs(x1 - x) === 2)
+          W1: ((Math.abs(y1 - y) === 2 && Math.abs(x1 - x) === 1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W')) || ((Math.abs(y1 - y) === 1 && Math.abs(x1 - x) === 2) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W')),
+          B1: ((Math.abs(y1 - y) === 2 && Math.abs(x1 - x) === 1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B')) || ((Math.abs(y1 - y) === 1 && Math.abs(x1 - x) === 2) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B'))
         },
         queen: {
-          W1: ((y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1)) || (Math.abs(y1 - y) === Math.abs(x1 - x) && this.checkPieceNotInWayDiagonal(x, y, x1, y1)),
-          B1: ((y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1)) || (Math.abs(y1 - y) === Math.abs(x1 - x) && this.checkPieceNotInWayDiagonal(x, y, x1, y1))
+          W1: ((y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W')) || (Math.abs(y1 - y) === Math.abs(x1 - x) && this.checkPieceNotInWayDiagonal(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W')),
+          B1: ((y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B')) || (Math.abs(y1 - y) === Math.abs(x1 - x) && this.checkPieceNotInWayDiagonal(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B'))
         },
         king: {
           W1: (Math.abs(y1 - y) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W')) || (Math.abs(x1 - x) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W')),
@@ -69,10 +71,12 @@ class App extends Component {
         let newLocation = [...this.state.locations]
         newLocation[x].splice(y, 1, this.state.selectedPiece)
         newLocation[x1].splice(y1, 1, '')
+        let newColour = this.state.colour === 'White' ? 'Black' : 'White'
         this.setState({
           locations: newLocation,
           selectedPiece: '',
-          currentLocation: ''
+          currentLocation: '',
+          colour: newColour
         })
       }
     }
@@ -80,9 +84,16 @@ class App extends Component {
 
   ////straight checks
   checkPieceNotInWay = (x, y, x1, y1) => {
+    x = parseInt(x);
+    y = parseInt(y);
+    x1 = parseInt(x1);
+    y1 = parseInt(y1);
+
+    console.log(x, y, 'target')
     if (x - x1 === 0) {
       let passable = true;
-      for (let i = y < y1 + 1 ? y : parseInt(y1) + 1; y < y1 ? i < y1 : i < y; i++) {
+      for (let i = y < y1 ? y + 1 : y1 + 1; y < y1 ? i < y1 : i < y; i++) {
+        console.log(x, i, 'checked1')
         if (this.state.locations[x][i] !== '') {
           passable = false;
           break;
@@ -92,7 +103,8 @@ class App extends Component {
       return passable;
     } else if (y - y1 === 0) {
       let passable = true;
-      for (let i = x < x1 ? x : parseInt(x1) + 1; x < x1 ? i < x1 : i < x; i++) {
+      for (let i = x < x1 ? x + 1 : x1 + 1; x < x1 ? i < x1 : i < x; i++) {
+        console.log(i, y, 'checked2')
         if (this.state.locations[i][y] !== '') {
           passable = false;
           break;
@@ -109,14 +121,16 @@ class App extends Component {
     y = parseInt(y)
     x1 = parseInt(x1)
     y1 = parseInt(y1)
+    console.log(x, y, 'target')
 
     ///left to right diagonal (decending)
     if (y - y1 === x - x1) {
       /// decending
       if (y > y1) {
         let passable = true;
-        let j = y;
-        for (let i = x; i >= x1 + 1; i--) {
+        let j = y - 1;
+        for (let i = x - 1; i >= x1 + 1; i--) {
+          console.log(i, j, 'tested')
           if (this.state.locations[i][j] !== '') {
             passable = false;
             break;
@@ -131,8 +145,9 @@ class App extends Component {
       /// accending
       else if (y1 > y) {
         let passable = true;
-        let j = y;
-        for (let i = x; i < x1; i++) {
+        let j = y + 1;
+        for (let i = x + 1; i < x1; i++) {
+          console.log(i, j, 'tested')
           if (this.state.locations[i][j] !== '') {
             passable = false;
             break;
@@ -150,8 +165,9 @@ class App extends Component {
       /// accending
       if (y > y1) {
         let passable = true;
-        let j = x1 - 1;
-        for (let i = y1 + 1; i <= y; i++) {
+        let j = x1 - 2;
+        for (let i = y1 + 2; i <= y; i++) {
+          console.log(i, j, 'tested')
           if (this.state.locations[j][i] !== '') {
             passable = false;
             break;
@@ -167,7 +183,8 @@ class App extends Component {
       else if (y1 > y) {
         let passable = true;
         let j = y1 - 1;
-        for (let i = x1 + 1; i <= x; i++) {
+        for (let i = x1 + 1; i <= x - 1; i++) {
+          console.log(i, j, 'tested')
           if (this.state.locations[i][j] !== '') {
             passable = false;
             break;
