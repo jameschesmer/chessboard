@@ -71,7 +71,7 @@ class App extends Component {
           B1: (Math.abs(y1 - y) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B')) || (Math.abs(x1 - x) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B'))
         }
       }
-      if (rules[this.state.selectedPiece.slice(2).toLowerCase()][`${this.state.selectedPiece[0]}1`]) {
+      if (this.state.selectedPiece !== '' && rules[this.state.selectedPiece.slice(2).toLowerCase()][`${this.state.selectedPiece[0]}1`]) {
         let newLocation = [...this.state.locations]
         newLocation[x].splice(y, 1, this.state.selectedPiece)
         newLocation[x1].splice(y1, 1, '')
