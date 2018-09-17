@@ -47,8 +47,8 @@ class App extends Component {
 
       const rules = {
         pawn: {
-          W1: ((x1 - x === 1 && y1 - y === 0 && this.checkPieceNotInWay(x, y, x1, y1)) || ((x1 - x === 1 && Math.abs(y1 - y) === 1))) || (x1 === '6' && (x1 - x) === 2 && (y1 - y) === 0 && this.checkPieceNotInWay(x, y, x1, y1)),
-          B1: ((x - x1 === 1 && y - y1 === 0 && this.checkPieceNotInWay(x, y, x1, y1)) || ((x - x1 === 1 && Math.abs(y - y1) === 1))) || (x1 === '1' && (x - x1) === 2 && (y1 - y) === 0 && this.checkPieceNotInWay(x, y, x1, y1))
+          W1: (((x1 - x === 1 && y1 - y === 0 && this.checkPieceNotInWay(x, y, x1, y1)) || ((x1 - x === 1 && Math.abs(y1 - y) === 1))) || (x1 === '6' && (x1 - x) === 2 && (y1 - y) === 0 && this.checkPieceNotInWay(x, y, x1, y1))) && this.pawnMoves(x, y, x1, y1, 'W'),
+          B1: (((x - x1 === 1 && y - y1 === 0 && this.checkPieceNotInWay(x, y, x1, y1)) || ((x - x1 === 1 && Math.abs(y - y1) === 1))) || (x1 === '1' && (x - x1) === 2 && (y1 - y) === 0 && this.checkPieceNotInWay(x, y, x1, y1))) && this.pawnMoves(x, y, x1, y1, 'B')
         },
         rook: {
           W1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W'),
@@ -217,6 +217,19 @@ class App extends Component {
     }
     if (colour === 'B') {
       return (this.state.locations[x][y][0] === 'W' || this.state.locations[x][y][0] === undefined)
+    }
+  }
+
+  pawnMoves = (x, y, x1, y1, colour) => {
+    x = parseInt(x);
+    y = parseInt(y);
+    x1 = parseInt(x1);
+    y1 = parseInt(y1);
+
+    if ((Math.abs(x1 - x) === 0 && Math.abs(y1 - y >= 1)) || (Math.abs(y1 - y) === 0 && Math.abs(x1 - x) >= 1)) {
+      return (this.state.locations[x][y] === '')
+    } else {
+      return this.checkDestinationIsOppositeColour(x, y, x1, y1, colour)
     }
   }
 }
