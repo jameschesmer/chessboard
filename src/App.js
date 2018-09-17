@@ -47,8 +47,8 @@ class App extends Component {
 
       const rules = {
         pawn: {
-          W1: (x1 - x === 1 && y1 - y === 0 && this.checkPieceNotInWay(x, y, x1, y1)) || (x1 - x === 1 && Math.abs(y1 - y) === 1),
-          B1: (x - x1 === 1 && y - y1 === 0 && this.checkPieceNotInWay(x, y, x1, y1)) || (x - x1 === 1 && Math.abs(y - y1) === 1),
+          W1: ((x1 - x === 1 && y1 - y === 0 && this.checkPieceNotInWay(x, y, x1, y1)) || ((x1 - x === 1 && Math.abs(y1 - y) === 1))) || (x1 === '6' && (x1 - x) === 2 && (y1 - y) === 0 && this.checkPieceNotInWay(x, y, x1, y1)),
+          B1: ((x - x1 === 1 && y - y1 === 0 && this.checkPieceNotInWay(x, y, x1, y1)) || ((x - x1 === 1 && Math.abs(y - y1) === 1))) || (x1 === '1' && (x - x1) === 2 && (y1 - y) === 0 && this.checkPieceNotInWay(x, y, x1, y1))
         },
         rook: {
           W1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W'),
@@ -94,6 +94,7 @@ class App extends Component {
     y1 = parseInt(y1);
 
     console.log(x, y, 'target')
+    console.log(x1, y1, 'origin')
     if (x - x1 === 0) {
       let passable = true;
       for (let i = y < y1 ? y + 1 : y1 + 1; y < y1 ? i < y1 : i < y; i++) {
