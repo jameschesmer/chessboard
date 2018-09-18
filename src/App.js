@@ -29,7 +29,7 @@ class App extends Component {
   }
 
   selectPiece = (event) => {
-    console.log(event.target)
+    // console.log(event.target)
     if (event.target.value[0] === this.state.colour[0]) {
       this.setState({
         selectedPiece: event.target.value,
