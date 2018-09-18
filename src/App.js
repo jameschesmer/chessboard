@@ -41,9 +41,10 @@ class App extends Component {
   }
 
   movePiece = (event) => {
+
     if (event.target.id) {
       let [x, y] = event.target.id.split(',')
-      let [x1, y1] = this.state.currentLocation;
+      let [x1, y1] = this.state.currentLocation
 
       const rules = {
         pawn: {
@@ -76,12 +77,16 @@ class App extends Component {
         newLocation[x].splice(y, 1, this.state.selectedPiece)
         newLocation[x1].splice(y1, 1, '')
         let newColour = this.state.colour === 'White' ? 'Black' : 'White'
+        // if (!this.checkWin(rules)) {
         this.setState({
           locations: newLocation,
           selectedPiece: '',
           currentLocation: '',
           colour: newColour
         })
+        // } else {
+        //   alert('This puts you in check')
+        // }
       }
     }
   }
@@ -93,12 +98,12 @@ class App extends Component {
     x1 = parseInt(x1);
     y1 = parseInt(y1);
 
-    console.log(x, y, 'target')
-    console.log(x1, y1, 'origin')
+    // console.log(x, y, 'target')
+    // console.log(x1, y1, 'origin')
     if (x - x1 === 0) {
       let passable = true;
       for (let i = y < y1 ? y + 1 : y1 + 1; y < y1 ? i < y1 : i < y; i++) {
-        console.log(x, i, 'checked1')
+        // console.log(x, i, 'checked1')
         if (this.state.locations[x][i] !== '') {
           passable = false;
           break;
@@ -109,7 +114,7 @@ class App extends Component {
     } else if (y - y1 === 0) {
       let passable = true;
       for (let i = x < x1 ? x + 1 : x1 + 1; x < x1 ? i < x1 : i < x; i++) {
-        console.log(i, y, 'checked2')
+        // console.log(i, y, 'checked2')
         if (this.state.locations[i][y] !== '') {
           passable = false;
           break;
@@ -126,7 +131,7 @@ class App extends Component {
     y = parseInt(y)
     x1 = parseInt(x1)
     y1 = parseInt(y1)
-    console.log(x, y, 'target')
+    // console.log(x, y, 'target')
 
     ///left to right diagonal (decending)
     if (y - y1 === x - x1) {
@@ -135,7 +140,7 @@ class App extends Component {
         let passable = true;
         let j = y - 1;
         for (let i = x - 1; i >= x1 + 1; i--) {
-          console.log(i, j, 'tested1')
+          // console.log(i, j, 'tested1')
           if (this.state.locations[i][j] !== '') {
             passable = false;
             break;
@@ -152,7 +157,7 @@ class App extends Component {
         let passable = true;
         let j = y + 1;
         for (let i = x + 1; i < x1; i++) {
-          console.log(i, j, 'tested2')
+          // console.log(i, j, 'tested2')
           if (this.state.locations[i][j] !== '') {
             passable = false;
             break;
@@ -172,7 +177,7 @@ class App extends Component {
         let passable = true;
         let j = x1 - 1;
         for (let i = y1 + 1; i <= y - 1; i++) {
-          console.log(j, i, 'tested3')
+          // console.log(j, i, 'tested3')
           if (this.state.locations[j][i] !== '') {
             passable = false;
             break;
@@ -189,7 +194,7 @@ class App extends Component {
         let passable = true;
         let j = y1 - 1;
         for (let i = x1 + 1; i <= x - 1; i++) {
-          console.log(i, j, 'tested4')
+          // console.log(i, j, 'tested4')
           if (this.state.locations[i][j] !== '') {
             passable = false;
             break;
@@ -212,7 +217,7 @@ class App extends Component {
     y1 = parseInt(y1)
 
     if (colour === 'W') {
-      console.log(this.state.locations[x][y][0], 'object colour')
+      // console.log(this.state.locations[x][y][0], 'object colour')
       return (this.state.locations[x][y][0] === 'B' || this.state.locations[x][y][0] === undefined)
     }
     if (colour === 'B') {
@@ -232,6 +237,30 @@ class App extends Component {
       return this.checkDestinationIsOppositeColour(x, y, x1, y1, colour)
     }
   }
+
+  // checkWin = (rules) => {
+  //   const colour = this.state.colour
+  //   const king = `${colour[0]} King`;
+  //   for (let i = 0; i <= 7; i++) {
+  //     if (this.state.locations[i].indexOf(king) > 0) {
+  //       const locationOfKing = [i, this.state.locations[i].indexOf(king)]
+  //       console.log(locationOfKing, 'location of king')
+
+  //       for (let i = 0; i <= 7; i++) {
+  //         for (let j = 0; j <= 7; j++) {
+  //           let currentPiece = this.state.locations[i][j]
+  //           if (currentPiece !== '' && currentPiece[0] !== `${colour[0]}`) {
+  //             console.log(currentPiece)
+  //             console.log(rules[currentPiece.slice(2).toLowerCase()][`${currentPiece[0]}1`])
+  //           }
+  //         }
+  //       }
+  //       console.log(Object.entries(rules))
+  //       // console.log(rules[][])
+  //       // return [i, this.state.locations[i].indexOf(king)];
+  //     }
+  //   }
+  // }
 }
 
 export default App;
