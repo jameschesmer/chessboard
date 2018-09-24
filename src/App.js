@@ -79,9 +79,14 @@ class App extends Component {
         newLocation[x1].splice(y1, 1, '')
         let newColour = this.state.colour === 'White' ? 'Black' : 'White'
         //only used when castling
-        if (this.state.selectedPiece === `${this.state.colour[0]} King` & Math.abs(y - y1) === 2) {
+        if (this.state.selectedPiece === `${this.state.colour[0]} King` & (y - y1) === 2) {
           newLocation[x].splice(parseInt(y) - 1, 1, this.state.locations[x][parseInt(y) + 1])
           newLocation[x1].splice(parseInt(y) + 1, 1, '')
+        }
+        if (this.state.selectedPiece === `${this.state.colour[0]} King` & (y - y1) === -2) {
+          console.log('here')
+          newLocation[x].splice(parseInt(y) + 1, 1, this.state.locations[x][parseInt(y) - 2])
+          newLocation[x1].splice(parseInt(y) - 2, 1, '')
         }
         // if (!this.checkWin(rules)) {
         this.setState({
@@ -251,13 +256,25 @@ class App extends Component {
     y1 = parseInt(y1);
 
     let passable = true;
-    for (let i = y1 + 1; i <= y; i++) {
-      if (this.state.locations[x1][i] !== '') {
-        passable = false;
+    if (y > y1) {
+      for (let i = y1 + 1; i <= y; i++) {
+        if (this.state.locations[x1][i] !== '') {
+          passable = false;
+        }
       }
+      if (this.state.locations[x1][y + 1] !== `${colour} Rook`) passable = false
+      return passable;
+    } else {
+      for (let i = y1 - 1; i >= y; i--) {
+        console.log(this.state.locations[x1][i], x, i)
+        if (this.state.locations[x1][i] !== '') {
+          passable = false;
+        }
+      }
+      if (this.state.locations[x1][y - 2] !== `${colour} Rook` && this.state.locations[x1][y - 1] !== '') passable = false
+      return passable;
     }
-    if (this.state.locations[x1][y + 1] !== `${colour} Rook`) passable = false
-    return passable;
+
   }
 
   // checkWin = (rules) => {
