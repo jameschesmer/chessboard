@@ -45,6 +45,7 @@ class App extends Component {
     if (event.target.id) {
       let [x, y] = event.target.id.split(',')
       let [x1, y1] = this.state.currentLocation
+      console.log(x1, 'x1', y1, 'y1')
 
       const rules = {
         pawn: {
@@ -68,8 +69,8 @@ class App extends Component {
           B1: ((y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B')) || (Math.abs(y1 - y) === Math.abs(x1 - x) && this.checkPieceNotInWayDiagonal(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B'))
         },
         king: {
-          W1: (Math.abs(y1 - y) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W')) || (Math.abs(x1 - x) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W')),
-          B1: (Math.abs(y1 - y) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B')) || (Math.abs(x1 - x) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B'))
+          W1: ((x1 === '7') && (y1 === '4') && this.castle(x, y, x1, y1, 'W')) || ((Math.abs(y1 - y) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W')) || (Math.abs(x1 - x) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W'))),
+          B1: ((x1 === '0') && (y1 === '4') && this.castle(x, y, x1, y1, 'B')) || ((Math.abs(y1 - y) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B')) || (Math.abs(x1 - x) === 1 && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B')))
         }
       }
       if (this.state.selectedPiece !== '' && rules[this.state.selectedPiece.slice(2).toLowerCase()][`${this.state.selectedPiece[0]}1`]) {
@@ -77,6 +78,11 @@ class App extends Component {
         newLocation[x].splice(y, 1, this.state.selectedPiece)
         newLocation[x1].splice(y1, 1, '')
         let newColour = this.state.colour === 'White' ? 'Black' : 'White'
+        //only used when castling
+        if (this.state.selectedPiece === `${this.state.colour[0]} King` & Math.abs(y - y1) === 2) {
+          newLocation[x].splice(parseInt(y) - 1, 1, this.state.locations[x][parseInt(y) + 1])
+          newLocation[x1].splice(parseInt(y) + 1, 1, '')
+        }
         // if (!this.checkWin(rules)) {
         this.setState({
           locations: newLocation,
@@ -236,6 +242,22 @@ class App extends Component {
     } else {
       return this.checkDestinationIsOppositeColour(x, y, x1, y1, colour)
     }
+  }
+
+  castle = (x, y, x1, y1, colour) => {
+    x = parseInt(x);
+    y = parseInt(y);
+    x1 = parseInt(x1);
+    y1 = parseInt(y1);
+
+    let passable = true;
+    for (let i = y1 + 1; i <= y; i++) {
+      if (this.state.locations[x1][i] !== '') {
+        passable = false;
+      }
+    }
+    if (this.state.locations[x1][y + 1] !== `${colour} Rook`) passable = false
+    return passable;
   }
 
   // checkWin = (rules) => {
