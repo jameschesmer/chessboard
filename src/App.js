@@ -266,13 +266,15 @@ class App extends Component {
       return passable;
     } else {
       for (let i = y1 - 1; i >= y; i--) {
-        console.log(this.state.locations[x1][i], x, i)
         if (this.state.locations[x1][i] !== '') {
           passable = false;
         }
       }
-      if (this.state.locations[x1][y - 2] !== `${colour} Rook` && this.state.locations[x1][y - 1] !== '') passable = false
+      if (this.state.locations[x1][y - 2] !== `${colour} Rook` || this.state.locations[x1][y - 1] !== '') {
+        passable = false;
+      }
       return passable;
+
     }
 
   }
