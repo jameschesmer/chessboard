@@ -1,4 +1,4 @@
-### Northcoders News
+### Chessboard
 
 A standard chessboard with turn control enabled. Most chess moves are possible with the exception of en passon. Currently no check is made for being in check. (This will be revised with later versions)
 
