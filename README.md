@@ -10,7 +10,7 @@ To see the project in action go
 
 The code behind this project is at https://github.com/jameschesmer/chessboard
 
-
+Live version 	- https://nc-chessboard.herokuapp.com/
 
 ### Prerequisites
 
