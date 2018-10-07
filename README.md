@@ -19,7 +19,7 @@ Node.js v10.6.0 or higher
 ### Installation
 
 git clone https://github.com/jameschesmer/chessboard
-cd ncnews
+cd chessboard
 npm install
 npm start
 
