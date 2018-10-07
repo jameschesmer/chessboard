@@ -24,6 +24,7 @@ class App extends Component {
         <h1>Chess Board</h1>
         <p>{this.state.colour} to play</p>
         <Tiles locations={this.state.locations} selectPiece={this.selectPiece} movePiece={this.movePiece} />
+        <p>Most chess moves are possible with the exception of en passon. Currently no check is made for being in check. (This will be revised with later versions). To move select a piece and click on the square you wish to move it to. If it is a valid move the piece will move. There is no undo so play carefully! This is a 2 player game.</p>
       </div>
     );
   }
@@ -45,7 +46,7 @@ class App extends Component {
     if (event.target.id) {
       let [x, y] = event.target.id.split(',')
       let [x1, y1] = this.state.currentLocation
-      console.log(x1, 'x1', y1, 'y1')
+      // console.log(x1, 'x1', y1, 'y1')
 
       const rules = {
         pawn: {
@@ -53,8 +54,8 @@ class App extends Component {
           B1: (((x - x1 === 1 && y - y1 === 0 && this.checkPieceNotInWay(x, y, x1, y1)) || ((x - x1 === 1 && Math.abs(y - y1) === 1))) || (x1 === '1' && (x - x1) === 2 && (y1 - y) === 0 && this.checkPieceNotInWay(x, y, x1, y1))) && this.pawnMoves(x, y, x1, y1, 'B')
         },
         rook: {
-          W1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W'),
-          B1: (y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B')
+          W1: ((y1 - y) === 0 || (x1 - x) === 0) && this.checkPieceNotInWay(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W'),
+          B1: ((y1 - y) === 0 || (x1 - x) === 0) && this.checkPieceNotInWay(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'B')
         },
         bishop: {
           W1: Math.abs(y1 - y) === Math.abs(x1 - x) && this.checkPieceNotInWayDiagonal(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W'),
@@ -74,6 +75,11 @@ class App extends Component {
         }
       }
       if (this.state.selectedPiece !== '' && rules[this.state.selectedPiece.slice(2).toLowerCase()][`${this.state.selectedPiece[0]}1`]) {
+
+        // console.log(this.checkWin(x, y, x1, y1, rules))
+        // if (this.checkWin(x, y, x1, y1, rules)) {
+        //   alert('This puts you in check')
+        // } else {
         let newLocation = [...this.state.locations]
         newLocation[x].splice(y, 1, this.state.selectedPiece)
         newLocation[x1].splice(y1, 1, '')
@@ -84,20 +90,17 @@ class App extends Component {
           newLocation[x1].splice(parseInt(y) + 1, 1, '')
         }
         if (this.state.selectedPiece === `${this.state.colour[0]} King` & (y - y1) === -2) {
-          console.log('here')
           newLocation[x].splice(parseInt(y) + 1, 1, this.state.locations[x][parseInt(y) - 2])
           newLocation[x1].splice(parseInt(y) - 2, 1, '')
         }
-        // if (!this.checkWin(rules)) {
         this.setState({
           locations: newLocation,
           selectedPiece: '',
           currentLocation: '',
           colour: newColour
         })
-        // } else {
-        //   alert('This puts you in check')
         // }
+
       }
     }
   }
@@ -222,13 +225,14 @@ class App extends Component {
 
   ///taking pieces
   checkDestinationIsOppositeColour = (x, y, x1, y1, colour) => {
+    // console.log(colour, '<<<<<<<')
+    // console.log(this.state.locations[x][y], 'item')
     x = parseInt(x);
     y = parseInt(y)
     x1 = parseInt(x1)
     y1 = parseInt(y1)
 
     if (colour === 'W') {
-      // console.log(this.state.locations[x][y][0], 'object colour')
       return (this.state.locations[x][y][0] === 'B' || this.state.locations[x][y][0] === undefined)
     }
     if (colour === 'B') {
@@ -279,29 +283,46 @@ class App extends Component {
 
   }
 
-  // checkWin = (rules) => {
-  //   const colour = this.state.colour
-  //   const king = `${colour[0]} King`;
-  //   for (let i = 0; i <= 7; i++) {
-  //     if (this.state.locations[i].indexOf(king) > 0) {
-  //       const locationOfKing = [i, this.state.locations[i].indexOf(king)]
-  //       console.log(locationOfKing, 'location of king')
+  checkWin = (x, y, x1, y1, rules) => {
+    const king = `${this.state.colour[0]} King`;
+    console.log(king, 'testking')
+    let locationOfKing;
+    for (let i = 0; i <= 7; i++) {
+      if (this.state.locations[i].indexOf(king) > 0) {
+        locationOfKing = [i, this.state.locations[i].indexOf(king)]
+        console.log(locationOfKing, 'location of king')
+        x = locationOfKing[0]
+        y = locationOfKing[1]
 
-  //       for (let i = 0; i <= 7; i++) {
-  //         for (let j = 0; j <= 7; j++) {
-  //           let currentPiece = this.state.locations[i][j]
-  //           if (currentPiece !== '' && currentPiece[0] !== `${colour[0]}`) {
-  //             console.log(currentPiece)
-  //             console.log(rules[currentPiece.slice(2).toLowerCase()][`${currentPiece[0]}1`])
-  //           }
-  //         }
-  //       }
-  //       console.log(Object.entries(rules))
-  //       // console.log(rules[][])
-  //       // return [i, this.state.locations[i].indexOf(king)];
-  //     }
-  //   }
-  // }
+        for (let i = 0; i <= 7; i++) {
+          for (let j = 0; j <= 7; j++) {
+            let currentPiece = this.state.locations[i][j]
+            if (currentPiece !== '' && currentPiece[0] !== `${this.state.colour[0]}`) {
+              x1 = i
+              y1 = j
+
+              console.log(currentPiece, 'piece')
+              console.log(x1, y1, 'location')
+              console.log(x, y, 'location of king')
+              console.log(`${currentPiece[0]}1`)
+              console.log(currentPiece.slice(2).toLowerCase())
+              // console.log(currentPiece.slice(2).toLowerCase(), '<<<<Rules(1)')
+              // console.log(`${currentPiece[0]}1`, '<<<<Rules(2)')
+              // console.log((y1 - y === 0 || x1 - x === 0) && this.checkPieceNotInWay(x, y, x1, y1) && this.checkDestinationIsOppositeColour(x, y, x1, y1, 'W'), 'Rook test')
+              // console.log(rules[currentPiece.slice(2).toLowerCase()][`${currentPiece[0]}1`], 'rules tests')
+              if (rules[currentPiece.slice(2).toLowerCase()][`${currentPiece[0]}1`]) {
+                console.log('true')
+                // return !rules[currentPiece.slice(2).toLowerCase()][`${currentPiece[0]}1`];
+              } else {
+                console.log('false')
+              }
+            }
+          }
+        }
+        console.log(Object.entries(rules))
+      }
+    }
+  }
 }
 
 export default App;
